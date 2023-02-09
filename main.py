@@ -17,7 +17,7 @@ class Flashcards(tk.Canvas):
         self.text = self.create_text(width/2, height/2, anchor="center", font=FONT)
         self.text2 = self.create_text(width/2, height/5, anchor="center", font=FONT2)
 
-        self.place(anchor='center', relx=0.5, rely=0.4)
+        self.place(anchor='center', relx=0.5, rely=0.45)
 
 
         # Import word bank from .csv file
@@ -43,7 +43,9 @@ class Flashcards(tk.Canvas):
         self.english = None
 
         self.difficulty = .8
-        self.proceed = True
+
+        self.timer = self.timer = self.after(ms=3000, func=self.flip)
+
 
     def update(self, correct=None):
         """Updates the correct-incorrect ratio"""
@@ -59,7 +61,6 @@ class Flashcards(tk.Canvas):
         self.bank.reset_index(drop=True, inplace=True)
 
     def generate(self):
-        self.proceed = False
         mean = len(self.bank)
         for row in range(len(self.bank) - 1, -1, -1):
 
@@ -79,29 +80,25 @@ class Flashcards(tk.Canvas):
 
     def display(self):
         """Draw a random item from the word bank and display it"""
+        self.after_cancel(self.timer)
         self.tag_raise(self.front)
-        self.itemconfig(self.text2, text="French")
+        self.itemconfig(self.text2, text="French", fill="Black")
         self.tag_raise(self.text2)
-        self.itemconfig(self.text, text = self.french)
+        self.itemconfig(self.text, text = self.french, fill="Black")
         self.tag_raise(self.text)
-        self.after(ms=3000, func=self.flip)
-
-
+        self.timer = self.after(ms=3000, func=self.flip)
 
     def flip(self):
         self.tag_raise(self.back)
-        self.itemconfig(self.text2, text="English")
+        self.itemconfig(self.text2, text="English", fill="White")
         self.tag_raise(self.text2)
-        self.itemconfig(self.text, text=self.english)
+        self.itemconfig(self.text, text=self.english, fill="White")
         self.tag_raise(self.text)
-        self.proceed = True
-        return show_buttons()
 
 
     def draw_card(self):
-        if self.proceed:
-            self.generate()
-            self.display()
+        self.generate()
+        self.display()
 
     def export(self):
         self.bank.to_csv(self.path, index=False)
@@ -110,18 +107,6 @@ class Flashcards(tk.Canvas):
 
 def new_round(correct):
     my_cards.update(correct=correct)
-    game_round()
-
-def show_buttons():
-    b_correct.place(anchor="center", relx=.7, rely=.9, height = 50, width = 50)
-    b_wrong.place(anchor="center", relx=.3, rely=.9, height = 50, width = 50)
-
-def hide_buttons():
-    b_wrong.place_forget()
-    b_correct.place_forget()
-
-def game_round():
-    hide_buttons()
     my_cards.draw_card()
 
 def game_exit():
@@ -133,18 +118,19 @@ root = tk.Tk()
 root.title("Learn French!")
 root.config(bg="#B1DDC6")
 # root.iconbitmap("my_icon.ico")
-root.minsize(width=500, height=350)
-root.maxsize(width=500, height=350)
+root.minsize(width=500, height=400)
+root.maxsize(width=500, height=400)
 
 img_correct = tk.PhotoImage(file="./images/right.png")
 b_correct = tk.Button(command=lambda: new_round(correct=True), image = img_correct, highlightthickness=0, bd = 0, bg="#B1DDC6", activebackground="#B1DDC6")
 img_wrong = tk.PhotoImage(file="./images/wrong.png")
 b_wrong = tk.Button(command=lambda: new_round(correct=False), image=img_wrong, highlightthickness=0, bd = 0, bg="#B1DDC6", activebackground="#B1DDC6")
-
+b_correct.place(anchor="center", relx=.7, rely=.88, height=50, width=50)
+b_wrong.place(anchor="center", relx=.3, rely=.88, height=50, width=50)
 
 my_cards = Flashcards(400, 263, root, "data/french_words.csv")
 
-game_round()
+my_cards.draw_card()
 
 root.bind("<Escape>", lambda event: root.destroy())
 root.protocol("WM_DELETE_WINDOW", game_exit)
