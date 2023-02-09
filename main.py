@@ -1,19 +1,21 @@
 import pandas as pd
 import tkinter as tk
 import random as r
-FONT = ("Javanese Text", 40, "normal")
+FONT = ("Javanese Text", 50, "normal")
+FONT2 = ("Javanese Text", 18, "italic")
 
 class Flashcards(tk.Canvas):
     def __init__(self, width, height, master, path):
         super().__init__(width=width, height=height, master = master)
         self.config(bg="#B1DDC6", highlightthickness=0, bd = 0 )
         self.front_side = tk.PhotoImage(file='images/card_front.png')
-        self.front = self.create_image(width/2, height/2, image=self.front_side)
+        self.front = self.create_image(width/2, height/2, anchor="center", image=self.front_side)
 
         self.back_side = tk.PhotoImage(file='images/card_back.png')
-        self.back = self.create_image(width/2, height/2, image=self.back_side)
+        self.back = self.create_image(width/2, height/2, anchor="center", image=self.back_side)
 
         self.text = self.create_text(width/2, height/2, anchor="center", font=FONT)
+        self.text2 = self.create_text(width/2, height/5, anchor="center", font=FONT2)
 
         self.place(anchor='center', relx=0.5, rely=0.4)
 
@@ -78,6 +80,8 @@ class Flashcards(tk.Canvas):
     def display(self):
         """Draw a random item from the word bank and display it"""
         self.tag_raise(self.front)
+        self.itemconfig(self.text2, text="French")
+        self.tag_raise(self.text2)
         self.itemconfig(self.text, text = self.french)
         self.tag_raise(self.text)
         self.after(ms=3000, func=self.flip)
@@ -86,6 +90,8 @@ class Flashcards(tk.Canvas):
 
     def flip(self):
         self.tag_raise(self.back)
+        self.itemconfig(self.text2, text="English")
+        self.tag_raise(self.text2)
         self.itemconfig(self.text, text=self.english)
         self.tag_raise(self.text)
         self.proceed = True
@@ -124,7 +130,7 @@ def game_exit():
 
 
 root = tk.Tk()
-root.title("Il Pomodoro")
+root.title("Learn French!")
 root.config(bg="#B1DDC6")
 # root.iconbitmap("my_icon.ico")
 root.minsize(width=500, height=500)
