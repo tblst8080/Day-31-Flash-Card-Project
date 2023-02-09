@@ -113,8 +113,8 @@ def new_round(correct):
     game_round()
 
 def show_buttons():
-    b_correct.place(anchor="center", relx=.7, rely=.8, height = 50, width = 50)
-    b_wrong.place(anchor="center", relx=.3, rely=.8, height = 50, width = 50)
+    b_correct.place(anchor="center", relx=.7, rely=.9, height = 50, width = 50)
+    b_wrong.place(anchor="center", relx=.3, rely=.9, height = 50, width = 50)
 
 def hide_buttons():
     b_wrong.place_forget()
@@ -133,8 +133,8 @@ root = tk.Tk()
 root.title("Learn French!")
 root.config(bg="#B1DDC6")
 # root.iconbitmap("my_icon.ico")
-root.minsize(width=500, height=500)
-root.maxsize(width=500, height=500)
+root.minsize(width=500, height=350)
+root.maxsize(width=500, height=350)
 
 img_correct = tk.PhotoImage(file="./images/right.png")
 b_correct = tk.Button(command=lambda: new_round(correct=True), image = img_correct, highlightthickness=0, bd = 0, bg="#B1DDC6", activebackground="#B1DDC6")
